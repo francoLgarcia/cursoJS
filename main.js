@@ -2,10 +2,10 @@
 
 class Pelicula {
 
-    constructor(id,nombrePelicula, precioAsiento) {
+    constructor(id,nombrePelicula, precioEntrada) {
         this.id = id;
         this.nombrePelicula = nombrePelicula;
-        this.precioAsiento = precioAsiento;
+        this.precioEntrada = precioEntrada;
 
         this.generarAsientos();
     }
@@ -48,7 +48,7 @@ function hayAsientosDisponibles (pelicula, cantidadDeAsientos) {
 }
 
 function calcularTotalPelicula (pelicula, cantidadDeAsientos) {
-    return cantidadDeAsientos * pelicula.precioAsiento;
+    return cantidadDeAsientos * pelicula.precioEntrada;
 }
 
 function ocuparAsientos (pelicula, cantidadDeAsientos) {
