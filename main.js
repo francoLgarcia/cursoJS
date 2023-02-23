@@ -173,7 +173,7 @@ formularioPeliculas.addEventListener("submit", (event) => {
 
     actualizarLS();
 
-    // Renderizo los productos
+    // Renderizo las peliculas
     renderizarReserva(listaDePeliculas);
 });
 
@@ -181,7 +181,7 @@ inputBuscar.addEventListener("input", () => {
 
     const peliculaABuscar = inputBuscar.value;
 
-    // Filtro los productos
+    // Filtro las peliculas
     const reservasFiltradas = listaDePeliculas.filter( (reserva) => {
         return reserva.pelicula.toLowerCase().includes(peliculaABuscar.toLowerCase());
     });
@@ -189,7 +189,7 @@ inputBuscar.addEventListener("input", () => {
     renderizarReserva(reservasFiltradas);
 });
 
-// Renderizo los productos
+// Renderizo las peliculas
 renderizarReserva(listaDePeliculas);
 
 
