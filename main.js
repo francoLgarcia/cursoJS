@@ -1,3 +1,200 @@
+
+// Clases
+
+class Reserva {
+    constructor(pelicula, horario,sucursal) {
+        this.pelicula = pelicula;
+        this.horario = horario;
+        this.sucursal = sucursal;
+    }
+}
+
+// Función
+
+function eliminarPelicula(reserva) {
+
+    // Busco índice donde está el elemento
+    const indiceElementoAEliminar = listaDePeliculas.findIndex( (productoAEliminar) => {
+        return productoAEliminar.pelicula === reserva.pelicula;
+    });
+
+    // Borro la reserva utilizando el índice
+    listaDePeliculas.splice(indiceElementoAEliminar, 1);
+
+    actualizarLS();
+
+    renderizarReserva(listaDePeliculas);
+}
+
+function editarNombreReserva(reserva, nuevoNombre) {
+
+    // Busco índice donde está el elemento
+    const indiceElementoAModificar = listaDePeliculas.findIndex( (productoAEliminar) => {
+        return productoAEliminar.pelicula === reserva.pelicula;
+    });
+
+    // Actualizo el pelicula de la reserva
+    listaDePeliculas[indiceElementoAModificar].pelicula = nuevoNombre;
+
+    actualizarLS();
+
+    renderizarReserva(listaDePeliculas);
+}
+
+function renderizarReserva (productos) {
+
+    // Limpio la tabla
+    bodyTabla.innerHTML = "";
+
+    productos.forEach( (reserva) => {
+
+        // Creamos la fila
+        const tr = document.createElement("tr");
+
+        const tdPelicula = document.createElement("td");
+        const span = document.createElement("span");
+        span.innerHTML = `${reserva.pelicula}`;
+        tdPelicula.append(span);
+
+        // Agregar evento de click al span para poner el input
+        span.addEventListener("click", () => {
+
+            // Ocultar etiqueta span
+            span.className = "oculta";
+
+            // Creo el input que va a ser el cambio de pelicula
+            const inputCambioDeNombre = document.createElement("input");
+            inputCambioDeNombre.value = reserva.pelicula;
+
+            // Detecto cambio en el input
+            inputCambioDeNombre.addEventListener("change", () => {
+
+                // Obtengo el nuevo pelicula del reserva a través del value del input
+                const nuevoNombre = inputCambioDeNombre.value;
+
+                // Removemos el input
+                inputCambioDeNombre.remove();
+
+                // Volver a poner el span
+                span.className = "visible";
+
+                // Editar pelicula del reserva
+                editarNombreReserva(reserva, nuevoNombre);
+            });
+
+            // Agrego el input al td
+            tdPelicula.append(inputCambioDeNombre);
+        });
+
+        const tdHorario = document.createElement("td");
+        tdHorario.innerHTML = `${reserva.horario}`;
+
+        const tdSucursal = document.createElement("td");
+        tdSucursal.innerHTML = `${reserva.sucursal}`;
+
+        const tdAcciones = document.createElement("td");
+        const botonEliminarPelicula = document.createElement("button");
+        botonEliminarPelicula.innerText = "Eliminar Reserva";
+
+        // Agregar evento al boton de eliminar
+        botonEliminarPelicula.addEventListener("click", () => {
+            eliminarPelicula(reserva);
+        });
+
+        tdAcciones.append(botonEliminarPelicula);
+
+        // Agrego los tds al tr
+        tr.append(tdPelicula);
+        tr.append(tdHorario);
+        tr.append(tdSucursal);
+        tr.append(tdAcciones);
+
+        // Agrego el tr al tbody
+        bodyTabla.append(tr);
+    });
+
+}
+
+function obtenerReserva () {
+    let productos = [];
+
+    // Obtengo lo que hay en LS
+    let productosLS = localStorage.getItem("productos");
+
+    // Si hay algo (Lo que significa que no me devuelve null) lo parseo y lo asigno a la variable productos
+    if(productosLS !== null) {
+
+        // Parseo los objetos literales del JSON
+        const productosJSON = JSON.parse(productosLS);
+
+        // Recorro cada objeto literal e instancio un nuevo objeto de la clase Reserva
+        for(const productoJSON of productosJSON) {
+            productos.push(new Reserva(productoJSON.pelicula, productoJSON.horario, productoJSON.sucursal));
+        }
+    }
+
+    return productos;
+}
+
+function actualizarLS () {
+    // Parseo array de objetos a JSON
+    const listaDeReservas = JSON.stringify(listaDePeliculas);
+
+    // Almaceno el JSON en LS
+    localStorage.setItem("productos", listaDeReservas);
+}
+
+// Inicio del programa
+
+let seleccionPelicula = document.getElementById("pelicula");
+let seleccionHorario = document.getElementById("horario");
+let seleccionSucursal = document.getElementById("sucursal");
+
+const listaDePeliculas = obtenerReserva();
+
+const formularioPeliculas = document.getElementById("reservaPeliculas");
+const bodyTabla = document.getElementById("bodyTabla");
+const inputNombre = document.getElementById("nombreDelProducto");
+const inputPrecio = document.getElementById("precioDelProducto");
+const inputBuscar = document.getElementById("buscarProducto");
+
+formularioPeliculas.addEventListener("submit", (event) => {
+
+    // Freno el flujo del evento
+    event.preventDefault();
+
+    const pelicula = seleccionPelicula.value;
+    const horario = seleccionHorario.value;
+    const sucursal = seleccionSucursal.value;
+
+
+    // Agrego el reserva al array
+    listaDePeliculas.push(new Reserva(pelicula, horario,sucursal));
+
+    actualizarLS();
+
+    // Renderizo los productos
+    renderizarReserva(listaDePeliculas);
+});
+
+inputBuscar.addEventListener("input", () => {
+
+    const peliculaABuscar = inputBuscar.value;
+
+    // Filtro los productos
+    const reservasFiltradas = listaDePeliculas.filter( (reserva) => {
+        return reserva.pelicula.toLowerCase().includes(peliculaABuscar.toLowerCase());
+    });
+
+    renderizarReserva(reservasFiltradas);
+});
+
+// Renderizo los productos
+renderizarReserva(listaDePeliculas);
+
+
+/* 
+
 // Clases
 
 class Pelicula {
@@ -143,3 +340,8 @@ while(peliculaAComprar !== 0) {
 }
 
 alert("Gracias por su compra");
+
+const coleccionPeliculas = document.getElementsByClassName("peliculas");
+document.getElementById("mostrar2").innerHTML = coleccionLi[2].innerHTML;
+
+*/
